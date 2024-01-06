@@ -1,15 +1,25 @@
 // pages/api/games.js
 
 const GAMES_LIST = [
-    ":rocket: <https://www.stackoverflow.com|Item 1>", 
-    ":globe: <https://www.google.com|Item 2>",
-    ":tada: <https://www.stackoverflow.com|Item 3>",
+    ":earth_asia: <https://worldle.teuteuf.fr/|Worldle>", 
+    ":film_frames: <https://framed.wtf/|Framed>",
+    ":clapper: <https://www.cinenerdle2.app/|Cine2Nerdle>",
+    ":arrows_counterclockwise: <https://www.nytimes.com/games/connections|Connections>",
 ];
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
         const { text, response_url } = req.body;
-        const numberOfGames = parseInt(text, 10); // Parse the number from the command text, e.g., "2" from "/games 2"
+        
+        // Set default number of games to 2 if no number is provided or if parsing fails
+        let numberOfGames = parseInt(text, 10);
+        if (isNaN(numberOfGames) || text.trim() === '') {
+            numberOfGames = 2;
+        }
+        // Make sure numberOfGames does not exceed the length of GAMES_LIST
+        numberOfGames = Math.min(numberOfGames, GAMES_LIST.length);
+        // Make sure numberOfGames is not less than 1
+        numberOfGames = Math.max(1, numberOfGames);
 
         // Randomly choose games from the games list
         const chosen_games = selectRandomGames(GAMES_LIST, numberOfGames);
@@ -26,7 +36,7 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                "blocks": [
+                blocks: [
                     {
                         "type": "section",
                         "text": {
@@ -36,6 +46,7 @@ export default async function handler(req, res) {
                     }
                 ],
                 response_type: 'in_channel',
+                delete_original: 'true'
             }),
         });
 
