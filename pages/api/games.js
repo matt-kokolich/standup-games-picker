@@ -1,14 +1,21 @@
 // pages/api/games.js
 
+const GAMES_LIST = [
+    ":rocket: <https://www.stackoverflow.com|Item 1>", 
+    ":globe: <https://www.google.com|Item 2>",
+    ":tada: <https://www.stackoverflow.com|Item 3>",
+];
+
 export default async function handler(req, res) {
     if (req.method === 'POST') {
         const { text, response_url } = req.body;
         const numberOfGames = parseInt(text, 10); // Parse the number from the command text, e.g., "2" from "/games 2"
 
-        // You could have a function to select 'numberOfGames' random games
-        const games = selectRandomGames(['A', 'B', 'C'], numberOfGames);
+        // Randomly choose games from the games list
+        const chosen_games = selectRandomGames(GAMES_LIST, numberOfGames);
+        const bot_message = createBotMessage(chosen_games);
 
-        // Use the SLACK_OAUTH_TOKEN environment variable
+        // Oauth token from Slack
         const token = process.env.SLACK_OAUTH_TOKEN;
 
         // Post the message back to the Slack channel
@@ -19,7 +26,15 @@ export default async function handler(req, res) {
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({
-                text: `Today's standup games are: ${games.join(' and ')}`,
+                "blocks": [
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": `${bot_message}`
+                        }
+                    }
+                ],
                 response_type: 'in_channel',
             }),
         });
@@ -58,4 +73,8 @@ function selectRandomGames(list, count) {
     }
 
     return selectedGames;
+}
+
+function createBotMessage(games) {
+    return `Today's standup games are: \n${games.join('\n')}`;
 }
