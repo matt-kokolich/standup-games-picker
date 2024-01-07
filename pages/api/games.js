@@ -25,10 +25,10 @@ export default async function handler(req, res) {
         const chosen_games = selectRandomGames(GAMES_LIST, numberOfGames);
         const bot_message = createBotMessage(chosen_games);
 
-        // Oauth token from Slack
+        // Use Vercel environment variable to store the Slack OAuth token
         const token = process.env.SLACK_OAUTH_TOKEN;
 
-        // Post the message back to the Slack channel
+        // Post the games list back to the Slack channel
         await fetch(response_url, {
             method: 'POST',
             headers: {
@@ -46,7 +46,6 @@ export default async function handler(req, res) {
                     }
                 ],
                 response_type: 'in_channel',
-                delete_original: 'true'
             }),
         });
 

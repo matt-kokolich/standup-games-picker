@@ -11,7 +11,7 @@ export default function Home() {
         <title>Standup Games Picker</title>
         <meta name="description" content="" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/die_alpha.png" />
       </Head>
       <main className={`${styles.main} ${inter.className}`}>
         <div className={styles.description}>
